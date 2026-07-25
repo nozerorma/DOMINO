@@ -26,7 +26,7 @@ The study is available at https://www.embopress.org/doi/full/10.15252/msb.202095
 
 ## Requirements
 DOMINO was tested under the following settings:
-- Python 3.8 (Note that for further versions of python some dependency packages are currently not available via pip)
+- Python >= 3.11 (dependencies modernized in this fork -- networkx>=3.2, numpy>=1.26, scipy>=1.11, pandas>=2.0, statsmodels>=0.14, pcst-fast>=1.0.10, python-louvain>=0.16; see `setup.py`)
 - Linux OS (Ubuntu 14.04 LTS, Ubuntu 18.04.4 LTS)
 
 ## Installation
@@ -68,7 +68,7 @@ Download the source files and install according to the following:
 
 Clone the repo from Github:
 ```
-git clone https://github.com/Shamir-Lab/DOMINO.git
+git clone https://github.com/nozerorma/DOMINO.git
 cd DOMINO
 ```
 

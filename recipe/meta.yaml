@@ -1,0 +1,53 @@
+{% set name = "domino" %}
+{% set version = "0.2.0" %}
+
+package:
+  name: {{ name }}
+  version: "{{ version }}"
+
+source:
+  # nozerorma/DOMINO fork -- modernized dependencies (see setup.py) and the
+  # statsmodels.sandbox.stats.multicomp.fdrcorrection0 fix in src/core/domino.py
+  # (that function was removed from statsmodels entirely; any build against a
+  # non-ancient statsmodels needs this fix, not just a version bump).
+  # TODO before building: `git tag v{{ version }}` and push it -- this recipe
+  # pins a tag that doesn't exist on the remote yet.
+  git_url: https://github.com/nozerorma/DOMINO.git
+  git_rev: v{{ version }}
+
+build:
+  number: 0
+  noarch: python
+  script: {{ PYTHON }} -m pip install . --ignore-installed --no-deps -vv
+  entry_points:
+    - domino = src.runner:main_domino
+    - slicer = src.runner:main_slicer
+
+requirements:
+  host:
+    - pip
+    - python >=3.11
+  run:
+    - python >=3.11
+    - networkx >=3.2,<4
+    - numpy >=1.26,<3
+    - scipy >=1.11,<2
+    - pandas >=2.0,<3
+    - pcst-fast >=1.0.10
+    - statsmodels >=0.14,<1
+    - python-louvain >=0.16
+
+test:
+  commands:
+    - domino --help
+    - slicer --help
+
+about:
+  home: https://github.com/nozerorma/DOMINO
+  license: MIT
+  license_family: MIT
+  summary: AMI algorithm with low rate of false calls (fork with modernized Python/dependency stack)
+
+extra:
+  recipe-maintainers:
+    - nozerorma

@@ -9,7 +9,11 @@ import numpy as np
 import pickle
 import multiprocessing
 from scipy.stats import hypergeom
-from statsmodels.sandbox.stats.multicomp import fdrcorrection0
+# statsmodels.sandbox.stats.multicomp.fdrcorrection0 was removed from statsmodels
+# entirely (sandbox module pruned). statsmodels.stats.multitest.fdrcorrection is
+# its direct successor: identical signature (pvals, alpha, method, is_sorted)
+# and identical (reject, pvals_corrected) return shape.
+from statsmodels.stats.multitest import fdrcorrection as fdrcorrection0
 
 import pcst_fast
 import networkx as nx
