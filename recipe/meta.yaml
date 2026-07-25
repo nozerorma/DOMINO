@@ -18,7 +18,14 @@ source:
 build:
   number: 0
   noarch: python
-  script: {{ PYTHON }} -m pip install . --ignore-installed --no-deps -vv
+  # --no-build-isolation: this is a plain setup.py package (no pyproject.toml),
+  # so pip's default PEP 517 path still tries to build an isolated venv and
+  # populate it with setuptools from an index -- but conda-build explicitly
+  # blocks index access during the build step. setuptools has to already be
+  # in the host env (below) and pip told to use it directly, or the build
+  # fails with "Cannot import 'setuptools.build_meta'" (modern conda-forge
+  # python packages no longer bundle setuptools the way old ones did).
+  script: {{ PYTHON }} -m pip install . --ignore-installed --no-deps --no-build-isolation -vv
   entry_points:
     - domino = src.runner:main_domino
     - slicer = src.runner:main_slicer
@@ -26,6 +33,7 @@ build:
 requirements:
   host:
     - pip
+    - setuptools
     - python >=3.11
   run:
     - python >=3.11

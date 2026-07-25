@@ -25,8 +25,7 @@ The study is available at https://www.embopress.org/doi/full/10.15252/msb.202095
 
 
 ## Requirements
-DOMINO was tested under the following settings:
-- Python >= 3.11 (dependencies modernized in this fork -- networkx>=3.2, numpy>=1.26, scipy>=1.11, pandas>=2.0, statsmodels>=0.14, pcst-fast>=1.0.10, python-louvain>=0.16; see `setup.py`)
+- Python >= 3.11 (dependencies modernized in this fork -- networkx>=3.2, numpy>=1.26, scipy>=1.11, pandas>=2.0, statsmodels>=0.14, pcst-fast>=1.0.10, python-louvain>=0.16; see `setup.py`). Functionally verified end-to-end (`slicer` + `domino`, against `examples/dip.sif`) on Python 3.12.3; the published conda package (`conda install -c miralnso domino`) is `noarch` and its dependencies get resolved per-environment, so it isn't tied to one exact Python patch version.
 - Linux OS (Ubuntu 14.04 LTS, Ubuntu 18.04.4 LTS)
 
 ## Installation
@@ -43,14 +42,11 @@ Then, install domino via pip:
 pip install domino-python
 ```
 
-### From conda (Bioconda)
+### From conda
 
-Make sure the Bioconda repository and its dependencies are available:
-```
-conda config --add channels defaults
-conda config --add channels conda-forge 
-conda config --add channels bioconda
-```
+This fork's modernized package (Python 3.11+, current networkx/numpy/scipy/pandas/statsmodels)
+is published on the `miralnso` Anaconda.org channel -- **not** bioconda, which still only has
+the original 2021-era pins from `Shamir-Lab/DOMINO`.
 
 Create a virtual environment in conda. For example:
 ```
@@ -58,9 +54,9 @@ conda create --name domino-env
 conda activate domino-env
 ```
 
-Then, install domino via pip:
+Then, install domino from the `miralnso` channel:
 ```
-conda install domino
+conda install -c conda-forge -c miralnso domino
 ```
 
 ### From source
