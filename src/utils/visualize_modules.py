@@ -184,7 +184,10 @@ def visualize_modules(dataset_name, G_modules, score_file_name, network_file_nam
     params=[]
     for i, G_module in enumerate(G_modules):
         params.append([i, G_module, score_file_name, network_file_name, dataset_name, modules_summary, output_base_dir])
-    p=multiprocessing.Pool(constants.N_OF_THREADS)
+    # "fork" for consistency with src/core/domino.py's Pool() sites -- see the
+    # comment in prune_network_by_modularity() there for why (Python 3.14
+    # changed the POSIX multiprocessing default away from "fork").
+    p=multiprocessing.get_context("fork").Pool(constants.N_OF_THREADS)
     p.map(module_report, params)
     p.close()
     # [module_report(p) for p in params]

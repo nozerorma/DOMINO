@@ -78,7 +78,15 @@ def prune_network_by_modularity(G, modules, cache_file):
     G_modularity = G
     print(
         f"Before slicing: n of cc:{len(list(connected_components(G_modularity)))}, n of nodes: {len(G_modularity.nodes)}, n of edges, {len(G_modularity.edges)}")
-    p = multiprocessing.Pool(constants.N_OF_THREADS)
+    # "fork" explicitly: create_subgraph() reads G_modularity as a module-level
+    # global rather than a passed argument, relying on the worker inheriting
+    # the parent's memory via copy-on-write. Python 3.14 changed the default
+    # start method on POSIX from "fork" to "forkserver" (workers forked from a
+    # separate server process at ITS OWN import time, not the current
+    # process's mutated state) -- under that default this silently sees
+    # G_modularity as still None. Same reasoning applies to every other Pool()
+    # in this file and in visualize_modules.py.
+    p = multiprocessing.get_context("fork").Pool(constants.N_OF_THREADS)
 
     G_modules = p.map(create_subgraph, [m for m in modules])
     p.close()
@@ -236,7 +244,9 @@ def retain_relevant_slices(G_original, module_sig_th):
 
     ccs = [G_modularity.subgraph(c) for c in connected_components(G_modularity)]
     params = []
-    p = multiprocessing.Pool(constants.N_OF_THREADS)
+    # See the "fork" comment in prune_network_by_modularity() above -- pf_filter()
+    # (the worker here) also reads G_modularity as a module-level global.
+    p = multiprocessing.get_context("fork").Pool(constants.N_OF_THREADS)
     n_G_original = len(G_original)
     n_pertubed_nodes = len(pertubed_nodes)
     pertubed_nodes_in_ccs = []
@@ -356,7 +366,10 @@ def main(active_genes_file, network_file, slices_file=None, slice_threshold=0.3,
     params = []
     for i_cc, cc in enumerate(relevant_slices):
         params.append([G, cc, i_cc, n_steps, relevant_slices, prize_factor, module_threshold])
-    p = multiprocessing.Pool(constants.N_OF_THREADS)
+    # analyze_slice() takes G explicitly (not via global), but kept consistent
+    # with the other Pool() sites in this file -- see the comment in
+    # prune_network_by_modularity() above.
+    p = multiprocessing.get_context("fork").Pool(constants.N_OF_THREADS)
     putative_modules = reduce(lambda a, b: a + b, p.map(analyze_slice, params), [])
     p.close()
     print(f'n of putative modules: {len(putative_modules)}')

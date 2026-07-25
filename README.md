@@ -25,7 +25,7 @@ The study is available at https://www.embopress.org/doi/full/10.15252/msb.202095
 
 
 ## Requirements
-- Python >= 3.11 (dependencies modernized in this fork -- networkx>=3.2, numpy>=1.26, scipy>=1.11, pandas>=2.0, statsmodels>=0.14, pcst-fast>=1.0.10, python-louvain>=0.16; see `setup.py`). Functionally verified end-to-end (`slicer` + `domino`, against `examples/dip.sif`) on Python 3.12.3; the published conda package (`conda install -c miralnso domino`) is `noarch` and its dependencies get resolved per-environment, so it isn't tied to one exact Python patch version.
+- Python >= 3.11 (dependencies modernized in this fork -- networkx>=3.2, numpy>=1.26, scipy>=1.11, pandas>=2.0, statsmodels>=0.14, pcst-fast>=1.0.10, python-louvain>=0.16; see `setup.py`). Functionally verified end-to-end (`slicer` + `domino`, against `examples/dip.sif`) on both Python 3.12.3 and Python 3.14.3 + pandas 3.0.0. Python 3.14 needed a real fix, not just a version bump: it changed the default `multiprocessing` start method on POSIX from `fork` to `forkserver`, which broke every `Pool()` call site relying on worker processes inheriting parent-set module-level globals (fixed by requesting the `fork` context explicitly). The published conda package (`conda install -c miralnso domino`) is `noarch` and its dependencies get resolved per-environment, so it isn't tied to one exact Python patch version.
 - Linux OS (Ubuntu 14.04 LTS, Ubuntu 18.04.4 LTS)
 
 ## Installation
