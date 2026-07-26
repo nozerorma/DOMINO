@@ -92,7 +92,12 @@ def prune_network_by_modularity(G, modules, cache_file):
     p.close()
     # print(f'{modules}')
     print(f'# of modules after extraction: {len(G_modules)}')
-    G_modularity = nx.algorithms.operators.union_all(G_modules)
+    # union_all() raises ValueError on an empty list. Zero modules surviving
+    # slicing is a legitimate outcome (e.g. a small/sparse network with no
+    # cluster meeting the slicer's own threshold), not malformed input --
+    # retain_relevant_slices() below already treats "nothing survived" as
+    # nx.Graph() rather than crashing; mirror that convention here.
+    G_modularity = nx.algorithms.operators.union_all(G_modules) if G_modules else nx.Graph()
     print(
         f"After slicing: n of cc:{len(list(connected_components(G_modularity)))}, n of nodes: {len(G_modularity.nodes)}, n of edges, {len(G_modularity.edges)}")
     pickle.dump(G_modularity, open(cache_file, 'wb+'))
