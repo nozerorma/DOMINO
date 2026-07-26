@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='domino-python',
-    version="0.3.0",
+    version="0.3.1",
     author="Hagai Levi",
     author_email="hagai.levi.007@gmail.com",
     description='DOMINO: Discovery of Modules In Networks using Omic',

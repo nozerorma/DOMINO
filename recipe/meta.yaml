@@ -1,19 +1,23 @@
 {% set name = "domino" %}
-{% set version = "0.3.0" %}
+{% set version = "0.3.1" %}
 
 package:
   name: {{ name }}
   version: "{{ version }}"
 
 source:
-  # nozerorma/DOMINO fork -- modernized dependencies (see setup.py). Two real
-  # fixes beyond version bumps, both required for this to actually run, not
+  # nozerorma/DOMINO fork -- modernized dependencies (see setup.py). Real
+  # fixes beyond version bumps, all required for this to actually run, not
   # just install: statsmodels.sandbox.stats.multicomp.fdrcorrection0 was
-  # removed from statsmodels entirely (fixed in src/core/domino.py), and
-  # Python 3.14 changed the default multiprocessing start method on POSIX
-  # from "fork" to "forkserver", breaking every Pool() call site that reads
+  # removed from statsmodels entirely (fixed in src/core/domino.py); Python
+  # 3.14 changed the default multiprocessing start method on POSIX from
+  # "fork" to "forkserver", breaking every Pool() call site that reads
   # module-level globals set by the parent process (fixed by requesting the
-  # "fork" context explicitly at each site).
+  # "fork" context explicitly at each site); prune_network_by_modularity()
+  # crashed via union_all() on an empty list when zero modules survive
+  # slicing -- a legitimate outcome for small/sparse networks, not malformed
+  # input (fixed to match retain_relevant_slices()'s existing "nothing
+  # survived -> nx.Graph()" convention).
   # TODO before building: `git tag v{{ version }}` and push it -- this recipe
   # pins a tag that doesn't exist on the remote yet.
   git_url: https://github.com/nozerorma/DOMINO.git
